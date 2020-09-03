@@ -1,0 +1,27 @@
+name: Atom
+description: In-game File Editor
+
+main: tsp.atom.Atom
+version: 1.0
+author: Silent
+
+commands:
+  atom:
+    usage: /atom
+    description: Plugin Information
+  viewfile:
+    usage: /viewfile <file>
+    description: View a files contents
+    aliases: [vf]
+  editfile:
+    usage: /editfile <line> f:<file> t:<text>
+    description: Edit a files line
+    aliases: [ef]
+  viewdir:
+    usage: /viewdir <path>
+    description: View contents of a directory
+    aliases: [vd, viewdirectory]
+
+permissions:
+  atom.admin:
+    default: op
