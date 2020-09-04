@@ -2,13 +2,16 @@ name: Atom
 description: In-game File Editor
 
 main: tsp.atom.Atom
-version: 1.0
+version: 1.1
 author: Silent
 
 commands:
   atom:
     usage: /atom
     description: Plugin Information
+  editor:
+    usage: /editor [file]
+    description: Open the editor for given file
   viewfile:
     usage: /viewfile <file>
     description: View a files contents
@@ -21,6 +24,10 @@ commands:
     usage: /viewdir <path>
     description: View contents of a directory
     aliases: [vd, viewdirectory]
+  deletefile:
+    usage: /deletefile <file>
+    description: Delete a file
+    aliases: [df]
 
 permissions:
   atom.admin:

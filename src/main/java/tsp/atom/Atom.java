@@ -1,10 +1,9 @@
 package tsp.atom;
 
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
-import tsp.atom.command.Command_atom;
-import tsp.atom.command.Command_editfile;
-import tsp.atom.command.Command_viewdir;
-import tsp.atom.command.Command_viewfile;
+import tsp.atom.command.*;
+import tsp.atom.editor.PagedPaneListener;
 import tsp.atom.util.Log;
 
 public class Atom extends JavaPlugin {
@@ -14,16 +13,18 @@ public class Atom extends JavaPlugin {
     @Override
     public void onEnable() {
         Log.info("Loading Atom - " + getDescription().getVersion());
-        instance = this;
-
-        Log.debug("Loading files...");
         saveDefaultConfig();
+        instance = this;
 
         Log.debug("Registering commands...");
         getCommand("atom").setExecutor(new Command_atom());
+        getCommand("editor").setExecutor(new Command_editor());
         getCommand("viewfile").setExecutor(new Command_viewfile());
         getCommand("editfile").setExecutor(new Command_editfile());
         getCommand("viewdir").setExecutor(new Command_viewdir());
+        getCommand("deletefile").setExecutor(new Command_deletefile());
+
+        Bukkit.getPluginManager().registerEvents(new PagedPaneListener(), this);
 
         Log.info("Done!");
         Log.info(" ");
