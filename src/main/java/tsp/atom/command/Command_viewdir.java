@@ -1,5 +1,9 @@
 package tsp.atom.command;
 
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -49,7 +53,19 @@ public class Command_viewdir implements CommandExecutor {
 
         Utils.sendMessage(sender, " ");
         for (int i = 0; i < files.size(); i++) {
-            Utils.sendMessage(sender, "&e&l(" + i + ") &f" + files.get(i).getName());
+            String name = files.get(i).getName();
+            TextComponent component = new TextComponent(Utils.transform("&e&l(" + i + ") &f" + name));
+            if (files.get(i).isDirectory()) {
+                component.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/editor " + files.get(i).getPath()));
+                component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(Utils.colorize("&7Click to open the editor for &e" + name))));
+            }else {
+                component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(Utils.colorize(
+                        "&7Size: " + files.get(i).length() + " B (" + (files.get(i).length() / 1000000) + " MB) \n" +
+                        "&7R/W: " + (files.get(i).canRead() ? "&aY" : "&cN") + "&7/" + (files.get(i).canWrite() ? "&aY" : "&cN"
+                )))));
+            }
+            sender.spigot().sendMessage(component);
+            //Utils.sendMessage(sender, "&e&l(" + i + ") &f" + files.get(i).getName());
         }
         Utils.sendMessage(sender, " ");
         return true;

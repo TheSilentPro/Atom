@@ -4,10 +4,8 @@ import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -42,13 +40,13 @@ public class Editor {
     public List<String> getLines() {
         try {
             Scanner scanner = new Scanner(file);
-            List<String> lines = new ArrayList<String>();
+            List<String> lines = new ArrayList<>();
             while (scanner.hasNextLine()) {
                 lines.add(scanner.nextLine());
             }
 
             return lines;
-        } catch (FileNotFoundException ex) {
+        } catch (IOException ex) {
             return null;
         }
     }
@@ -66,10 +64,10 @@ public class Editor {
 
     public static void open(Player player, File file) {
         if (!file.exists()) {
-            Utils.sendMessage(player, "&cThat file/directory does not exist!");
+            Utils.sendMessage(player, "&cThat directory does not exist!");
             return;
         }
-        PagedPane main = new PagedPane(4, 6, "Editor");
+        PagedPane main = new PagedPane(6, 6, "Editor");
 
             for (File f : file.listFiles()) {
                 // Create item for file
@@ -110,7 +108,7 @@ public class Editor {
     }
 
     public static void edit(Player player, File file) {
-        PagedPane edit = new PagedPane(4, 6, "Edit: " + file.getName());
+        PagedPane edit = new PagedPane(6, 6, "Edit: " + file.getName());
 
         HashMap<ItemStack, Option> options = new HashMap();
         // Rename

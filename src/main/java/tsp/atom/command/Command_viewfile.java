@@ -1,5 +1,9 @@
 package tsp.atom.command;
 
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -50,7 +54,12 @@ public class Command_viewfile implements CommandExecutor {
 
         Utils.sendMessage(sender, " ");
         for (int i = 0; i < lines.size(); i++) {
-            Utils.sendMessage(sender, "&b(" + i + ") &f" + lines.get(i));
+            TextComponent component = new TextComponent(Utils.transform("&b(" + i + ") &f" + lines.get(i)));
+            component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(Utils.colorize("&7Click to edit line &b" + i + "&7 in chat"))));
+            component.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/ef " + i + " " +
+                    message.replace(Config.getString("spaceCharacter"), " ") + " "));
+            sender.spigot().sendMessage(component);
+            //Utils.sendMessage(sender, "&b(" + i + ") &f" + lines.get(i));
         }
         Utils.sendMessage(sender, " ");
         return true;

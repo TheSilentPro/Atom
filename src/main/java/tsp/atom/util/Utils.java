@@ -6,6 +6,8 @@ import org.bukkit.command.ConsoleCommandSender;
 
 public class Utils {
 
+    public static final String PREFIX = "&7[&9&lAtom&7] ";
+
     public static boolean isAdmin(CommandSender sender) {
         if (sender instanceof ConsoleCommandSender) return true;
         if (Config.getString("permissionType").equalsIgnoreCase("LIST")) {
@@ -15,7 +17,11 @@ public class Utils {
     }
 
     public static void sendMessage(CommandSender sender, String message) {
-        sender.sendMessage(colorize("&7[&9&lAtom" + "&7] " + message));
+        sender.sendMessage(colorize(PREFIX + message));
+    }
+
+    public static String transform(String message) {
+        return colorize(PREFIX + message);
     }
 
     public static String colorize(String message) {
