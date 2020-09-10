@@ -71,7 +71,7 @@ public class Editor {
 
             for (File f : file.listFiles()) {
                 // Create item for file
-                ItemStack item = f.isDirectory() ? XMaterial.BOOK.parseItem() : XMaterial.PAPER.parseItem();
+                ItemStack item = f.isDirectory() ? XMaterial.CHEST.parseItem() : XMaterial.PAPER.parseItem();
                 ItemMeta meta = item.getItemMeta();
                 meta.setDisplayName(f.isDirectory() ? ChatColor.YELLOW + f.getName() : ChatColor.AQUA + f.getName());
 
@@ -112,7 +112,7 @@ public class Editor {
 
         HashMap<ItemStack, Option> options = new HashMap();
         // Rename
-        ItemStack rename = XMaterial.PAPER.parseItem();
+        ItemStack rename = XMaterial.NAME_TAG.parseItem();
         ItemMeta renameMeta = rename.getItemMeta();
         renameMeta.setDisplayName(Utils.colorize("&bRename"));
         rename.setItemMeta(renameMeta);
@@ -187,7 +187,7 @@ public class Editor {
         edit.open(player);
     }
 
-    private static String getExtension(File file) {
+    public static String getExtension(File file) {
         String name = file.getName();
         if(name.lastIndexOf(".") != -1 && name.lastIndexOf(".") != 0)
             return name.substring(name.lastIndexOf(".") + 1);

@@ -2,7 +2,7 @@ name: Atom
 description: In-game File Editor
 
 main: tsp.atom.Atom
-version: 1.1
+version: 1.2
 author: Silent
 
 commands:

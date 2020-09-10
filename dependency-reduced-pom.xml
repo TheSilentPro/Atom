@@ -4,7 +4,7 @@
   <groupId>tsp.atom</groupId>
   <artifactId>Atom</artifactId>
   <name>Atom</name>
-  <version>1.1</version>
+  <version>1.2</version>
   <description>In-game File Editor</description>
   <build>
     <plugins>

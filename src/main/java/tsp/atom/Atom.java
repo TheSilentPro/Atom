@@ -5,6 +5,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import tsp.atom.command.*;
 import tsp.atom.editor.PagedPaneListener;
 import tsp.atom.util.Log;
+import tsp.atom.util.Metrics;
+import tsp.atom.util.Utils;
 
 public class Atom extends JavaPlugin {
 
@@ -25,6 +27,9 @@ public class Atom extends JavaPlugin {
         getCommand("deletefile").setExecutor(new Command_deletefile());
 
         Bukkit.getPluginManager().registerEvents(new PagedPaneListener(), this);
+
+        Log.debug("Starting metrics...");
+        new Metrics(this, Utils.METRICS_ID);
 
         Log.info("Done!");
         Log.info(" ");

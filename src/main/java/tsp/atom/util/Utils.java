@@ -7,6 +7,7 @@ import org.bukkit.command.ConsoleCommandSender;
 public class Utils {
 
     public static final String PREFIX = "&7[&9&lAtom&7] ";
+    public static final int METRICS_ID = 8813;
 
     public static boolean isAdmin(CommandSender sender) {
         if (sender instanceof ConsoleCommandSender) return true;
