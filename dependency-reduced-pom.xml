@@ -4,7 +4,7 @@
   <groupId>tsp.atom</groupId>
   <artifactId>Atom</artifactId>
   <name>Atom</name>
-  <version>1.2</version>
+  <version>2.0</version>
   <description>In-game File Editor</description>
   <build>
     <plugins>
@@ -42,8 +42,8 @@
       <url>https://papermc.io/repo/repository/maven-public/</url>
     </repository>
     <repository>
-      <id>jitpack.io</id>
-      <url>https://jitpack.io</url>
+      <id>codemc-snapshots</id>
+      <url>https://repo.codemc.io/repository/maven-snapshots/</url>
     </repository>
   </repositories>
   <dependencies>

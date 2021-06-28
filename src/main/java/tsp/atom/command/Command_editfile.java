@@ -10,45 +10,41 @@ import tsp.atom.util.Utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 public class Command_editfile implements CommandExecutor {
 
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-        if (!Utils.isAdmin(sender)) {
+        if (!Utils.isAdmin(sender, "editfile")) {
             Utils.sendMessage(sender, "&cNo permission!");
             return true;
         }
 
         if (args.length < 1) {
-            Utils.sendMessage(sender, "&c/editfile <line> <file> <text>");
+            Utils.sendMessage(sender, "&c/editfile <line> \"<file>\" \"<text>\"");
             Utils.sendMessage(sender, "Remember to use the full &cPATH &7and add the &c.EXTENSION&7!");
             return true;
         }
 
-        int line = -1;
+        int line;
         try {
             line = Integer.parseInt(args[0]);
         } catch (NumberFormatException ex) {
             Utils.sendMessage(sender, "&cLine is not a number!");
             return true;
         }
-        if (line == -1) {
-            Utils.sendMessage(sender, "&cLine is not a number!");
+        List<String> arguments = Utils.getTexts(Utils.joinArgs(1, args));
+        if (arguments.size() < 1) {
+            Utils.sendMessage(sender, "&cInvalid arguments!");
             return true;
         }
 
-        String path = args[1];
+        String path = arguments.get(0);
+        String text = arguments.get(1);
 
+        Utils.sendMessage(sender, "Searching for &e" + path);
 
-        StringBuilder builder = new StringBuilder();
-        for (int i = 2; i < args.length; i++) {
-            builder.append(args[i]).append(" ");
-        }
-        String text = builder.toString().replace(Config.getString("spaceCharacter"), " ");
-
-        Utils.sendMessage(sender, "Searching for &e" + path.replace(Config.getString("spaceCharacter"), " "));
-
-        File file = new File(path.replace(Config.getString("spaceCharacter"), " "));
+        File file = new File(path);
         if (!file.exists()) {
             Utils.sendMessage(sender, "&cThat file does not exist!");
             return true;

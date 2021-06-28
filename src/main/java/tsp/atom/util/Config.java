@@ -8,8 +8,7 @@ import java.util.List;
 
 public class Config {
 
-    private static File configFile = new File("plugins/Atom/config.yml");
-    private static FileConfiguration config = YamlConfiguration.loadConfiguration(configFile);
+    private static final FileConfiguration config = YamlConfiguration.loadConfiguration(new File("plugins/Atom/config.yml"));
 
     public static String getString(String path) {
         return Utils.colorize(config.getString(path));

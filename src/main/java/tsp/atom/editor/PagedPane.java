@@ -1,17 +1,22 @@
 package tsp.atom.editor;
 
+import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import tsp.atom.Atom;
+import tsp.atom.util.Utils;
 import tsp.atom.util.XMaterial;
 
+import java.io.File;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
@@ -31,6 +36,8 @@ public class PagedPane implements InventoryHolder {
     protected Button controlBack;
     @SuppressWarnings("WeakerAccess")
     protected Button controlNext;
+    @SuppressWarnings("WeakerAccess")
+    protected Button controlMain;
 
     /**
      * @param pageSize The page size. inventory rows - 2
@@ -143,6 +150,7 @@ public class PagedPane implements InventoryHolder {
 
         controlBack = null;
         controlNext = null;
+        controlMain = null;
         createControls(inventory);
     }
 
@@ -164,6 +172,13 @@ public class PagedPane implements InventoryHolder {
         else if (event.getSlot() == inventory.getSize() - 2) {
             if (controlNext != null) {
                 controlNext.onClick(event);
+            }
+            return;
+        }
+        // main item
+        else if (event.getSlot() == inventory.getSize()- 5) {
+            if (controlMain != null){
+                controlMain.onClick(event);
             }
             return;
         }
@@ -240,6 +255,31 @@ public class PagedPane implements InventoryHolder {
                     getCurrentPage(), getPageAmount()
             );
             ItemStack itemStack = getItemStack(Material.BOOK, 0, name, lore);
+            controlMain = new Button(itemStack, event -> {
+                if (event.getClick() == ClickType.RIGHT) {
+                    new AnvilGUI.Builder()
+                            .onComplete((player, text) -> {
+                                try {
+                                    int i = Integer.parseInt(text);
+                                    if (i > getPageAmount()) {
+                                        Utils.sendMessage(player, "&cPage number is out of bounds! Max: &e" + getPageAmount());
+                                        return AnvilGUI.Response.text("&cOut of bounds!");
+                                    }
+                                    selectPage(i - 1);
+                                    return AnvilGUI.Response.openInventory(this.getInventory());
+                                } catch (NumberFormatException nfe) {
+                                    Utils.sendMessage(player, "&cValue must be a number!");
+                                    return AnvilGUI.Response.text(Utils.colorize("&cValue must be a number!"));
+                                }
+                            })
+                            .title("Select Page")
+                            .text("Page number...")
+                            .plugin(Atom.getInstance())
+                            .open((Player) event.getWhoClicked());
+                } else {
+                    Editor.open((Player) event.getWhoClicked(), new File("./"));
+                }
+            });
             inventory.setItem(inventory.getSize() - 5, itemStack);
         }
     }

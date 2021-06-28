@@ -1,15 +1,10 @@
 # Debug Mode
 debug: false
 
-# Character used in in-game commands that resemble a space
-# Instead of a space you type in this.
-# Example: 'some|file.txt' == 'some file.txt'
-spaceCharacter: '|'
-
 # Whether to use permissions or the list below to check if a player is able to execute commands
 # Types: LIST, PERMISSION
-permissionType: 'LIST'
+permissionType: 'PERMISSION'
 
-# List of admins that can use the plugins commands
+# List of admins that can use the plugins commands (Only works if permissionType is set to LIST)
 admins:
   - 'UnlimitedNinjas'

@@ -2,7 +2,7 @@ name: Atom
 description: In-game File Editor
 
 main: tsp.atom.Atom
-version: 1.2
+version: 2.0
 author: Silent
 
 commands:
@@ -31,4 +31,14 @@ commands:
 
 permissions:
   atom.admin:
+    default: op
+  atom.command.editor:
+    default: op
+  atom.command.viefile:
+    default: op
+  atom.command.editfile:
+    default: op
+  atom.command.viewdir:
+    default: op
+  atom.command.deletefile:
     default: op

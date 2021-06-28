@@ -17,7 +17,7 @@ import java.util.List;
 public class Command_viewfile implements CommandExecutor {
 
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-        if (!Utils.isAdmin(sender)) {
+        if (!Utils.isAdmin(sender, "viewfile")) {
             Utils.sendMessage(sender, "&cNo permission!");
             return true;
         }
@@ -27,15 +27,11 @@ public class Command_viewfile implements CommandExecutor {
             Utils.sendMessage(sender, "Remember to use the full &cPATH &7and add the &c.EXTENSION&7!");
             return true;
         }
-        StringBuilder builder = new StringBuilder();
-        for (String arg : args) {
-            builder.append(arg);
-        }
-        String message = builder.toString();
+        String message = Utils.joinArgs(args);
 
-        Utils.sendMessage(sender, "Searching for &e" + message.replace(Config.getString("spaceCharacter"), " "));
+        Utils.sendMessage(sender, "Searching for &e" + message);
 
-        File file = new File(message.replace(Config.getString("spaceCharacter"), " "));
+        File file = new File(message);
         if (!file.exists()) {
             Utils.sendMessage(sender, "&cThat file does not exist!");
             return true;
@@ -55,11 +51,9 @@ public class Command_viewfile implements CommandExecutor {
         Utils.sendMessage(sender, " ");
         for (int i = 0; i < lines.size(); i++) {
             TextComponent component = new TextComponent(Utils.transform("&b(" + i + ") &f" + lines.get(i)));
-            component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(Utils.colorize("&7Click to edit line &b" + i + "&7 in chat"))));
-            component.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/ef " + i + " " +
-                    message.replace(Config.getString("spaceCharacter"), " ") + " "));
+            component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(Utils.colorize("&7Click to manage line &b" + i + "&7 in chat"))));
+            component.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/ef " + i + " \"" + message + "\" "));
             sender.spigot().sendMessage(component);
-            //Utils.sendMessage(sender, "&b(" + i + ") &f" + lines.get(i));
         }
         Utils.sendMessage(sender, " ");
         return true;

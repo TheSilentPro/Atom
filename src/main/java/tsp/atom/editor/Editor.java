@@ -24,7 +24,7 @@ import java.util.*;
 
 public class Editor {
 
-    private File file;
+    private final File file;
 
     public Editor(File file) {
         this.file = file;
@@ -54,7 +54,7 @@ public class Editor {
     public void setLine(int line, String text) throws IOException {
         Path path = Paths.get(file.getPath());
         List<String> lines = Files.readAllLines(path, StandardCharsets.UTF_8);
-        lines.set(line, text.replace(Config.getString("spaceCharacter"), " "));
+        lines.set(line, text);
         Files.write(path, lines, StandardCharsets.UTF_8);
     }
 
@@ -83,11 +83,12 @@ public class Editor {
                 List<String> lore = new ArrayList<>();
                 lore.add(Utils.colorize("&7Type: " + (f.isDirectory() ? "&eDirectory" : "&bFile")));
                 if (f.isFile()) lore.add(Utils.colorize("&7Extension: " + getExtension(f)));
-                lore.add(Utils.colorize("&7Size: " + f.length() + " B (" + (f.length() / 1000000) + " MB)"));
+                lore.add(Utils.colorize("&7Size: " + (f.length() / 1_000_000) + " MB (" + f.length() + " B)"));
                 lore.add(Utils.colorize("&7R/W: " + (f.canRead() ? "&aY" : "&cN") + "&7/" + (f.canWrite() ? "&aY" : "&cN")));
                 lore.add(" ");
                 lore.add(Utils.colorize("&eLeft-Click to view contents"));
-                lore.add(Utils.colorize("&bRight-Click to edit"));
+                if (f.isDirectory()) lore.add(Utils.colorize("&bRight-Click to open and manage"));
+                lore.add(Utils.colorize("&cShift-Right-Click to manage file"));
                 meta.setLore(lore);
 
                 item.setItemMeta(meta);
@@ -96,10 +97,13 @@ public class Editor {
                     Player who = (Player) e.getWhoClicked();
 
                     if (e.getClick() == ClickType.LEFT) {
-                        Bukkit.dispatchCommand(who, (f.isDirectory() ? "vd " : "vf ") + f.getAbsolutePath().replace(" ", "|"));
+                        Bukkit.dispatchCommand(who, (f.isDirectory() ? "vd " : "vf ") + f.getAbsolutePath());
                     }
-                    if (e.getClick() == ClickType.RIGHT) {
-                        edit(who, f);
+                    if (e.getClick() == ClickType.RIGHT && f.isDirectory()) {
+                        Bukkit.dispatchCommand(who, "editor " + f.getAbsolutePath());
+                    }
+                    if (e.getClick() == ClickType.SHIFT_RIGHT) {
+                        manage(who, f);
                     }
                 }));
             }
@@ -107,7 +111,7 @@ public class Editor {
         main.open(player);
     }
 
-    public static void edit(Player player, File file) {
+    public static void manage(Player player, File file) {
         PagedPane edit = new PagedPane(6, 6, "Edit: " + file.getName());
 
         HashMap<ItemStack, Option> options = new HashMap();

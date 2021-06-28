@@ -13,7 +13,7 @@ public class Command_deletefile implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-        if (!Utils.isAdmin(sender)) {
+        if (!Utils.isAdmin(sender, "deletefile")) {
             Utils.sendMessage(sender, "&cNo permission!");
             return true;
         }
@@ -21,7 +21,7 @@ public class Command_deletefile implements CommandExecutor {
             Utils.sendMessage(sender, "&c/deletefile <file>");
             return true;
         }
-        String path = args[0].replace(Config.getString("spaceCharacter"), " ");
+        String path = Utils.joinArgs(args);
 
         Utils.sendMessage(sender, "Searching for &e" + path);
 
