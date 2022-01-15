@@ -1,9 +1,10 @@
-name: Atom
-description: In-game File Editor
+name: ${project.name}
+description: ${project.description}
 
 main: tsp.atom.Atom
-version: 2.0
+version: ${project.version}
 author: Silent
+api-version: 1.13
 
 commands:
   atom:
@@ -34,7 +35,7 @@ permissions:
     default: op
   atom.command.editor:
     default: op
-  atom.command.viefile:
+  atom.command.viewfile:
     default: op
   atom.command.editfile:
     default: op

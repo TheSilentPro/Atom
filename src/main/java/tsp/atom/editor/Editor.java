@@ -3,6 +3,7 @@ package tsp.atom.editor;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -10,39 +11,43 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import tsp.atom.Atom;
-import tsp.atom.util.Config;
 import tsp.atom.util.Utils;
-import tsp.atom.util.XMaterial;
+import tsp.smartplugin.builder.ItemBuilder;
+import tsp.smartplugin.inventory.Button;
+import tsp.smartplugin.inventory.paged.PagedPane;
+import tsp.smartplugin.inventory.single.Pane;
+import tsp.smartplugin.player.PlayerUtils;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Editor {
 
-    private final File file;
-
-    public Editor(File file) {
-        this.file = file;
-    }
-
-    public List<File> getFiles() {
+    public static List<File> getFiles(File file) {
         if (file.isDirectory()) {
             return Arrays.asList(file.listFiles());
         }
         return null;
     }
 
-    public List<String> getLines() {
+    public static List<String> getLines(File file) {
         try {
-            Scanner scanner = new Scanner(file);
+            BufferedReader reader = new BufferedReader(new FileReader(file));
             List<String> lines = new ArrayList<>();
-            while (scanner.hasNextLine()) {
-                lines.add(scanner.nextLine());
+            for (String line; (line = reader.readLine()) != null;) {
+                lines.add(line);
             }
 
             return lines;
@@ -51,27 +56,23 @@ public class Editor {
         }
     }
 
-    public void setLine(int line, String text) throws IOException {
+    public static void setLine(int line, String text, File file) throws IOException {
         Path path = Paths.get(file.getPath());
         List<String> lines = Files.readAllLines(path, StandardCharsets.UTF_8);
         lines.set(line, text);
         Files.write(path, lines, StandardCharsets.UTF_8);
     }
 
-    public boolean delete() {
-        return file.delete();
-    }
-
     public static void open(Player player, File file) {
         if (!file.exists()) {
-            Utils.sendMessage(player, "&cThat directory does not exist!");
+            PlayerUtils.sendMessage(player, "&cThat directory does not exist!");
             return;
         }
         PagedPane main = new PagedPane(6, 6, "Editor");
 
             for (File f : file.listFiles()) {
                 // Create item for file
-                ItemStack item = f.isDirectory() ? XMaterial.CHEST.parseItem() : XMaterial.PAPER.parseItem();
+                ItemStack item = f.isDirectory() ? new ItemStack(Material.CHEST) : new ItemStack(Material.PAPER);
                 ItemMeta meta = item.getItemMeta();
                 meta.setDisplayName(f.isDirectory() ? ChatColor.YELLOW + f.getName() : ChatColor.AQUA + f.getName());
 
@@ -112,26 +113,23 @@ public class Editor {
     }
 
     public static void manage(Player player, File file) {
-        PagedPane edit = new PagedPane(6, 6, "Edit: " + file.getName());
+        Pane edit = new Pane(6, "Edit: " + file.getName());
 
-        HashMap<ItemStack, Option> options = new HashMap();
+        Map<ItemStack, Option> options = new HashMap<>();
         // Rename
-        ItemStack rename = XMaterial.NAME_TAG.parseItem();
-        ItemMeta renameMeta = rename.getItemMeta();
-        renameMeta.setDisplayName(Utils.colorize("&bRename"));
-        rename.setItemMeta(renameMeta);
+        ItemStack rename = new ItemBuilder(Material.NAME_TAG)
+                .name("&b&lRENAME")
+                .build();
         options.put(rename, Option.RENAME);
         // Delete
-        ItemStack delete = XMaterial.LAVA_BUCKET.parseItem();
-        ItemMeta deleteMeta = delete.getItemMeta();
-        deleteMeta.setDisplayName(Utils.colorize("&cDelete"));
-        delete.setItemMeta(deleteMeta);
+        ItemStack delete = new ItemBuilder(Material.LAVA_BUCKET)
+                .name("&c&lDELETE")
+                .build();
         options.put(delete, Option.DELETE);
         // Move
-        ItemStack move = XMaterial.DIAMOND_BOOTS.parseItem();
-        ItemMeta moveMeta = move.getItemMeta();
-        moveMeta.setDisplayName(Utils.colorize("&eMove"));
-        move.setItemMeta(moveMeta);
+        ItemStack move = new ItemBuilder(Material.DIAMOND_BOOTS)
+                .name("&e&lMOVE")
+                .build();
         options.put(move, Option.MOVE);
 
         for (ItemStack item : options.keySet()) {
@@ -143,20 +141,20 @@ public class Editor {
                     switch (options.get(item)) {
                         case DELETE:
                             if (file.delete()) {
-                                Utils.sendMessage(who, "File was &cdeleted&7!");
+                                PlayerUtils.sendMessage(who, "File was &cdeleted&7!");
                                 who.closeInventory();
                             }else {
-                                Utils.sendMessage(who, "&cFailed to delete file!");
+                                PlayerUtils.sendMessage(who, "&cFailed to delete file!");
                             }
                             break;
                         case RENAME:
                             new AnvilGUI.Builder()
                                     .onComplete((p, text) -> {
                                         if (file.renameTo(new File(text))) {
-                                            Utils.sendMessage(p, "File renamed to &e" + text);
+                                            PlayerUtils.sendMessage(p, "File renamed to &e" + text);
                                             return AnvilGUI.Response.close();
                                         }else {
-                                            Utils.sendMessage(p, "&cFailed to rename file.");
+                                            PlayerUtils.sendMessage(p, "&cFailed to rename file.");
                                             return AnvilGUI.Response.text("Failed...");
                                         }
                                     })
@@ -171,10 +169,10 @@ public class Editor {
                                         try {
                                             Path dest = Paths.get(text).endsWith("/") ? Paths.get(text + file.getName()) : Paths.get(text + "/" + file.getName());
                                             Files.move(Paths.get(file.getAbsolutePath()), dest, StandardCopyOption.REPLACE_EXISTING);
-                                            Utils.sendMessage(p, "File moved to &e" + text);
+                                            PlayerUtils.sendMessage(p, "File moved to &e" + text);
                                             return AnvilGUI.Response.close();
                                         } catch (IOException ioException) {
-                                            Utils.sendMessage(p, "&cFailed to move file.");
+                                            PlayerUtils.sendMessage(p, "&cFailed to move file.");
                                             return AnvilGUI.Response.text("Failed.");
                                         }
                                     })

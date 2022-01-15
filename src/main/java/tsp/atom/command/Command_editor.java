@@ -6,6 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tsp.atom.editor.Editor;
 import tsp.atom.util.Utils;
+import tsp.smartplugin.player.PlayerUtils;
 
 import java.io.File;
 
@@ -14,11 +15,12 @@ public class Command_editor implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
         if (!Utils.isAdmin(sender, "editor")) {
-            Utils.sendMessage(sender, "&cNo permission!");
+            PlayerUtils.sendMessage(sender, "&cNo permission!");
             return true;
         }
         if (!(sender instanceof Player)) {
-            Utils.sendMessage(sender, "&cOnly for in-game players!");
+            PlayerUtils.sendMessage(sender, "&cOnly for in-game players!");
+            return true;
         }
         Player player = (Player) sender;
 

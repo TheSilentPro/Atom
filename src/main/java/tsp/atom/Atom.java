@@ -1,22 +1,19 @@
 package tsp.atom;
 
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.java.JavaPlugin;
 import tsp.atom.command.*;
-import tsp.atom.editor.PagedPaneListener;
-import tsp.atom.util.Log;
 import tsp.atom.util.Metrics;
-import tsp.atom.util.Utils;
+import tsp.smartplugin.SmartPlugin;
+import tsp.smartplugin.server.Log;
 
-public class Atom extends JavaPlugin {
+public class Atom extends SmartPlugin {
 
     private static Atom instance;
 
     @Override
-    public void onEnable() {
+    public void onStart() {
+        instance = this;
         Log.info("Loading Atom - " + getDescription().getVersion());
         saveDefaultConfig();
-        instance = this;
 
         Log.debug("Registering commands...");
         getCommand("atom").setExecutor(new Command_atom());
@@ -26,15 +23,10 @@ public class Atom extends JavaPlugin {
         getCommand("viewdir").setExecutor(new Command_viewdir());
         getCommand("deletefile").setExecutor(new Command_deletefile());
 
-        Bukkit.getPluginManager().registerEvents(new PagedPaneListener(), this);
-
         Log.debug("Starting metrics...");
-        new Metrics(this, Utils.METRICS_ID);
+        new Metrics(this, 8813);
 
         Log.info("Done!");
-        Log.info(" ");
-        Log.info("Running &9Atom v" + getDescription().getVersion() + " &aby &9" + getDescription().getAuthors());
-        Log.info(" ");
     }
 
     public static Atom getInstance() {
